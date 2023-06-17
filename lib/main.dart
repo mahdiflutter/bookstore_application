@@ -1,5 +1,6 @@
-import "package:bookstore_app/screens/login_1.dart";
-import "package:bookstore_app/screens/login_2.dart";
+import 'package:bookstore_app/screens/authentication/login_1.dart';
+import 'package:bookstore_app/screens/authentication/login_2.dart';
+import 'package:bookstore_app/screens/home.dart';
 import "package:flutter/material.dart";
 
 void main() {
@@ -46,7 +47,7 @@ class App extends StatelessWidget {
       ),
       home: const Directionality(
         textDirection: TextDirection.rtl,
-        child: Login2Screen(),
+        child: HomeScreen(),
       ),
     );
   }

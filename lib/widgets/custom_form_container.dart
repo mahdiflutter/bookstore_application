@@ -19,42 +19,47 @@ class CustomForm extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                headerText,
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Text(
-                descriptionText,
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              for (var element in body) ...[
-                element,
-                const SizedBox(
-                  height: 20,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 20,
+            ),
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      headerText,
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
+                  ),
                 ),
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      descriptionText,
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  ),
+                ),
+                for (var formField in body) ...[
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    sliver: SliverToBoxAdapter(
+                      child: formField,
+                    ),
+                  ),
+                ],
+                SliverToBoxAdapter(
+                  child: Text(
+                    footerText,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                )
               ],
-              Text(
-                footerText,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-            ],
-          ),
-        ),
+            )),
       ),
     );
   }
