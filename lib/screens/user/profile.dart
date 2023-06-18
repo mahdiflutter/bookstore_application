@@ -9,19 +9,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPageContainer(
+      hasTitle: true,
+      title: 'حساب کاربری',
       elements: [
-        //Header Section
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: CustomHeader(
-              title: 'حساب کاربری',
-            ),
-          ),
-        ),
         //Prpfile Image Section
         SliverToBoxAdapter(
           child: CircleAvatar(

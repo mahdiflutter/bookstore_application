@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomPageContainer(
+      hasTitle: false,
       elements: [
         //Serach Box Section
         const SliverPadding(

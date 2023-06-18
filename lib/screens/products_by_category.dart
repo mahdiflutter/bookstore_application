@@ -9,17 +9,9 @@ class ProductsByCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPageContainer(
+      hasTitle: true,
+      title: 'روان شناسی',
       elements: [
-        //Headre section
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: CustomHeader(title: 'روان شناسی'),
-          ),
-        ),
         //Products List Section
         SliverPadding(
           padding: const EdgeInsets.only(

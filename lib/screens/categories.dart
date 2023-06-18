@@ -1,4 +1,3 @@
-import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/widgets/custom_header.dart';
 import 'package:bookstore_app/widgets/custom_page_container.dart';
 import 'package:flutter/material.dart';
@@ -9,17 +8,9 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPageContainer(
+      hasTitle: true,
+      title: 'دسته بندی ها',
       elements: [
-        //Header Section
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: CustomHeader(title: 'دسته بندی'),
-          ),
-        ),
         //Categories List Section
         SliverGrid.builder(
           itemCount: 9,
