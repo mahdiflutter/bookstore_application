@@ -1,8 +1,10 @@
 import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/screens/app/setting.dart';
 import 'package:bookstore_app/screens/authentication/login_1.dart';
 import 'package:bookstore_app/screens/authentication/login_2.dart';
 import 'package:bookstore_app/screens/categories.dart';
 import 'package:bookstore_app/screens/home.dart';
+import 'package:bookstore_app/screens/product.dart';
 import 'package:bookstore_app/screens/products_by_category.dart';
 import 'package:bookstore_app/screens/user/basket.dart';
 import 'package:bookstore_app/screens/user/profile.dart';
@@ -70,7 +72,7 @@ class App extends StatelessWidget {
       ),
       home: const Directionality(
         textDirection: TextDirection.rtl,
-        child: BasketScreen(),
+        child: ProductScreen(),
       ),
     );
   }
