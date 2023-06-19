@@ -1,5 +1,6 @@
 import 'package:bookstore_app/constants/custom_colors.dart';
-import 'package:bookstore_app/widgets/custom_page_container.dart';
+import 'package:bookstore_app/widgets/custom_badge.dart';
+import 'package:bookstore_app/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
 
 class ProductScreen extends StatelessWidget {
@@ -7,115 +8,191 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPageContainer(
-      hasTitle: true,
-      title: 'عادت های اتمی',
-      elements: [
-        //Image Gallery Section
-        SliverToBoxAdapter(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 180,
-                height: 260,
-                color: CustomColors.textFieldBackground,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 80),
-                child: SizedBox(
-                  height: 70,
-                  child: ListView.builder(
-                    itemCount: 3,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return const GalleryChip();
-                    },
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 80),
+              child: CustomScrollView(
+                slivers: [
+                  //Header Section
+                  const SliverPadding(
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                    sliver: SliverToBoxAdapter(
+                      child: CustomHeader(title: 'عادت های اتمی'),
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-        //Book information Setion
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Text(
-                  'عادت های اتمی',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.person_outline_rounded,
-                      color: CustomColors.mainGrayText,
-                      size: 25,
+                  //Image Gallery Section
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 180,
+                          height: 260,
+                          color: CustomColors.textFieldBackground,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 80),
+                          child: SizedBox(
+                            height: 70,
+                            child: ListView.builder(
+                              itemCount: 3,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return const GalleryChip();
+                              },
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    const SizedBox(
-                      width: 10,
+                  ),
+                  //Book information Setion
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 20,
                     ),
-                    SizedBox(
-                      width: 50,
-                      child: Text(
-                        'نویسنده',
-                        style: Theme.of(context).textTheme.displaySmall,
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          Text(
+                            'عادت های اتمی',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.person_outline_rounded,
+                                color: CustomColors.mainGrayText,
+                                size: 25,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 50,
+                                child: Text(
+                                  'نویسنده',
+                                  style:
+                                      Theme.of(context).textTheme.displaySmall,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                ':',
+                                style: Theme.of(context).textTheme.displaySmall,
+                              ),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                'جیمز کلیر',
+                                style: Theme.of(context).textTheme.displaySmall,
+                              )
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(
-                      width: 2,
+                  ),
+                  //Summary Section
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
                     ),
-                    Text(
-                      ':',
-                      style: Theme.of(context).textTheme.displaySmall,
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'خلاصه کتاب:',
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                          Text(
+                            'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      'جیمز کلیر',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    )
-                  ],
-                ),
-              ],
+                  ),
+                  //Comments Section
+                  const Comments(),
+                  //Technical Info Section
+                  const Comments(),
+                ],
+              ),
             ),
-          ),
-        ),
-        //Summary Section
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'خلاصه کتاب:',
-                  style: Theme.of(context).textTheme.displayMedium,
+            //Buy Button Section
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container(
+                width: double.infinity,
+                height: 60,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    top: BorderSide(
+                      width: 1,
+                    ),
+                  ),
                 ),
-                Text(
-                  'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
-                  style: Theme.of(context).textTheme.displayMedium,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: const Text('افزودن به سبد خرید'),
+                      ),
+                      const Spacer(),
+                      const SizedBox(
+                        height: 30,
+                        child: CustomBadge(content: '10%'),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '150000',
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                          Text(
+                            '135000',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        'تومان',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      )
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            )
+          ],
         ),
-        //Comments Section
-        const Comments(),
-        //Technical Info Section
-        const Comments(),
-      ],
+      ),
     );
   }
 }
