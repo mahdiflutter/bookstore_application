@@ -1,8 +1,14 @@
 import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/data/model/category.dart';
+import 'package:bookstore_app/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
 
 class CustomCategoryChip extends StatelessWidget {
-  const CustomCategoryChip({super.key});
+  const CustomCategoryChip({
+    super.key,
+    required this.category,
+  });
+  final CategoryModel category;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +26,7 @@ class CustomCategoryChip extends StatelessWidget {
             margin: const EdgeInsets.only(
               bottom: 10,
             ),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: CustomColors.mainOrange,
               borderRadius: BorderRadius.circular(10),
@@ -32,9 +39,12 @@ class CustomCategoryChip extends StatelessWidget {
                 ),
               ],
             ),
+            child: CustomCachedImage(
+              url: category.iconUrl,
+            ),
           ),
           Text(
-            'روان شناسی',
+            category.title,
             style: Theme.of(context).textTheme.displayMedium,
           ),
         ],

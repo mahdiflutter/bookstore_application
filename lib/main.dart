@@ -1,3 +1,4 @@
+import 'package:bookstore_app/bloc/home/home_bloc.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/screens/app/setting.dart';
 import 'package:bookstore_app/screens/categories.dart';
@@ -6,6 +7,7 @@ import 'package:bookstore_app/screens/user/basket.dart';
 import 'package:bookstore_app/screens/user/profile.dart';
 import 'package:bookstore_app/services/service_locator.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   await initGetIt();
@@ -168,24 +170,27 @@ class _AppState extends State<App> {
   }
 
   List<Widget> getScreens() {
-    return const [
-      Directionality(
+    return [
+      const Directionality(
         textDirection: TextDirection.rtl,
         child: SettingsAppScreen(),
       ),
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.rtl,
         child: CategoriesScreen(),
       ),
       Directionality(
         textDirection: TextDirection.rtl,
-        child: HomeScreen(),
+        child: BlocProvider(
+          create: (context) => HomeBloc(),
+          child: const HomeScreen(),
+        ),
       ),
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.rtl,
         child: BasketScreen(),
       ),
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.rtl,
         child: ProfileScreen(),
       ),

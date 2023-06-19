@@ -1,14 +1,19 @@
+import 'package:bookstore_app/bloc/home/home_bloc.dart';
+import 'package:bookstore_app/bloc/home/home_event.dart';
+import 'package:bookstore_app/bloc/home/home_state.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
-import 'package:bookstore_app/widgets/custom_badge.dart';
+import 'package:bookstore_app/data/model/banner.dart';
+import 'package:bookstore_app/data/model/category.dart';
+import 'package:bookstore_app/widgets/custom_cached_image.dart';
 import 'package:bookstore_app/widgets/custom_category_chip.dart';
+import 'package:bookstore_app/widgets/custom_loading.dart';
 import 'package:bookstore_app/widgets/custom_page_container.dart';
 import 'package:bookstore_app/widgets/custom_product_cart.dart';
 import 'package:bookstore_app/widgets/custom_search_box.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-// import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,65 +28,114 @@ class _HomeScreenState extends State<HomeScreen> {
     initialPage: 1,
   );
   @override
-  Widget build(BuildContext context) {
-    return CustomPageContainer(
-      hasTitle: false,
-      elements: [
-        //Serach Box Section
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: CustomSerachBox(),
-          ),
-        ),
-        //Slider Section
-        SliverToBoxAdapter(
-          child: CustomSlider(sliderController: sliderController),
-        ),
-        //Categories List Section
-        const SliverPadding(
-          padding: EdgeInsets.only(
-            right: 30,
-            bottom: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: CustomCategoriesList(),
-          ),
-        ),
-        //Products list Section
-        const SliverToBoxAdapter(
-          child: ProductsList(),
-        ),
-        //ADS Banner Sectiopn
-        const SliverPadding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 20,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: AdsBanner(),
-          ),
-        ),
-        //Products list Section
-        const SliverToBoxAdapter(
-          child: ProductsList(),
-        ),
+  void initState() {
+    BlocProvider.of<HomeBloc>(context).add(HomeGetDataEvent());
+    super.initState();
+  }
 
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 30,
-          ),
-          sliver: SliverToBoxAdapter(
-            child: Image.asset(
-              'assets/images/notfound.png',
-            ),
-          ),
-        )
-      ],
+  @override
+  Widget build(BuildContext context) {
+    //Use Bloc Builder for manage state
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return CustomPageContainer(
+          hasTitle: false,
+          elements: [
+            //Waiting time to receive information from the server
+            if (state is HomeLoadingState) ...[
+              const SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 50,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: CustomLoading(),
+                ),
+              )
+            ],
+            //When the information is retrieved from the server
+            if (state is HomeResponseState) ...[
+              //Serach Box Section
+              const SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 20,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: CustomSerachBox(),
+                ),
+              ),
+
+              //Banner Slider Section
+              state.bannersResponse.fold(
+                (error) {
+                  return SliverToBoxAdapter(
+                    child: Text(error),
+                  );
+                },
+                (success) {
+                  return SliverToBoxAdapter(
+                    child: CustomSlider(
+                      sliderController: sliderController,
+                      bannersList: success,
+                    ),
+                  );
+                },
+              ),
+
+              //Categories List Section
+              state.categoriesResponse.fold(
+                (error) {
+                  return SliverToBoxAdapter(
+                    child: Text(error),
+                  );
+                },
+                (success) {
+                  return SliverPadding(
+                    padding: const EdgeInsets.only(
+                      right: 30,
+                      bottom: 20,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: CustomCategoriesList(categorieslist: success),
+                    ),
+                  );
+                },
+              ),
+
+              //Products list Section
+              const SliverToBoxAdapter(
+                child: ProductsList(),
+              ),
+              //ADS Banner Sectiopn
+              const SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 20,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: AdsBanner(),
+                ),
+              ),
+              //Products list Section
+              const SliverToBoxAdapter(
+                child: ProductsList(),
+              ),
+
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 30,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: Image.asset(
+                    'assets/images/notfound.png',
+                  ),
+                ),
+              )
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -167,7 +221,9 @@ class ProductsList extends StatelessWidget {
 class CustomCategoriesList extends StatelessWidget {
   const CustomCategoriesList({
     super.key,
+    required this.categorieslist,
   });
+  final List<CategoryModel> categorieslist;
 
   @override
   Widget build(BuildContext context) {
@@ -175,9 +231,11 @@ class CustomCategoriesList extends StatelessWidget {
       height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 9,
+        itemCount: categorieslist.length,
         itemBuilder: (context, index) {
-          return const CustomCategoryChip();
+          return CustomCategoryChip(
+            category: categorieslist[index],
+          );
         },
       ),
     );
@@ -188,9 +246,11 @@ class CustomSlider extends StatelessWidget {
   const CustomSlider({
     super.key,
     required this.sliderController,
+    required this.bannersList,
   });
 
   final PageController sliderController;
+  final List<BannerModel> bannersList;
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +266,8 @@ class CustomSlider extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 111,
-                  decoration: BoxDecoration(
-                    color: CustomColors.textFieldBackground,
-                    borderRadius: BorderRadius.circular(10),
+                  child: CustomCachedImage(
+                    url: bannersList[index].urlAddress,
                   ),
                 );
               },
