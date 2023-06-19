@@ -2,12 +2,13 @@ import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/screens/app/setting.dart';
 import 'package:bookstore_app/screens/categories.dart';
 import 'package:bookstore_app/screens/home.dart';
-import 'package:bookstore_app/screens/product.dart';
 import 'package:bookstore_app/screens/user/basket.dart';
 import 'package:bookstore_app/screens/user/profile.dart';
+import 'package:bookstore_app/services/service_locator.dart';
 import "package:flutter/material.dart";
 
-void main() {
+void main() async {
+  await initGetIt();
   runApp(const App());
 }
 
