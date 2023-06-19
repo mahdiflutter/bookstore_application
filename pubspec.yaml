@@ -39,6 +39,7 @@ dependencies:
   flutter_spinkit: ^5.2.0
   dartz: ^0.10.1
   get_it: ^7.6.0
+  flutter_bloc: ^8.1.3
 
 
 
