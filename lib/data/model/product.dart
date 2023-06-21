@@ -9,7 +9,7 @@ class ProductModel {
   final int realPrice;
   final int discount;
   final String publishYear;
-  final String pageCount;
+  final int pageCount;
   final String fontFamily;
   final String bookType;
   ProductModel({

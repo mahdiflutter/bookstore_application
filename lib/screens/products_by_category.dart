@@ -25,9 +25,7 @@ class ProductsByCategoryScreen extends StatelessWidget {
               mainAxisSpacing: 20,
             ),
             itemBuilder: (context, index) {
-              return const CustomProductCart(
-                hasShaddow: true,
-              );
+              return Text('0');
             },
           ),
         )

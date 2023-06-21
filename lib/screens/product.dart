@@ -1,11 +1,24 @@
 import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/data/model/product.dart';
+import 'package:bookstore_app/services/service_math.dart';
 import 'package:bookstore_app/widgets/custom_badge.dart';
+import 'package:bookstore_app/widgets/custom_cached_image.dart';
 import 'package:bookstore_app/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
 
-class ProductScreen extends StatelessWidget {
-  const ProductScreen({super.key});
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({
+    super.key,
+    required this.product,
+  });
+  final ProductModel product;
 
+  @override
+  State<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  bool viewComments = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,10 +31,11 @@ class ProductScreen extends StatelessWidget {
               child: CustomScrollView(
                 slivers: [
                   //Header Section
-                  const SliverPadding(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 30),
                     sliver: SliverToBoxAdapter(
-                      child: CustomHeader(title: 'عادت های اتمی'),
+                      child: CustomHeader(title: widget.product.categoryId),
                     ),
                   ),
                   //Image Gallery Section
@@ -29,27 +43,14 @@ class ProductScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 180,
                           height: 260,
-                          color: CustomColors.textFieldBackground,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 80),
-                          child: SizedBox(
-                            height: 70,
-                            child: ListView.builder(
-                              itemCount: 3,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return const GalleryChip();
-                              },
-                            ),
+                          child: CustomCachedImage(
+                            url: widget.product.imgUrl,
+                            radius: 0,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -63,43 +64,26 @@ class ProductScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'عادت های اتمی',
+                            widget.product.name,
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.person_outline_rounded,
-                                color: CustomColors.mainGrayText,
-                                size: 25,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              SizedBox(
-                                width: 50,
-                                child: Text(
-                                  'نویسنده',
-                                  style:
-                                      Theme.of(context).textTheme.displaySmall,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                ':',
-                                style: Theme.of(context).textTheme.displaySmall,
-                              ),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                'جیمز کلیر',
-                                style: Theme.of(context).textTheme.displaySmall,
-                              )
-                            ],
+                          ProductVariant(
+                            icon: Icons.person_outline,
+                            title: 'نویسنده',
+                            value: widget.product.writerName,
                           ),
+                          ProductVariant(
+                            icon: Icons.store_mall_directory_outlined,
+                            title: 'انتشارات',
+                            value: widget.product.publisher,
+                          ),
+                          widget.product.translator != ""
+                              ? ProductVariant(
+                                  icon: Icons.translate,
+                                  title: 'مترجم',
+                                  value: widget.product.translator,
+                                )
+                              : const Row(),
                         ],
                       ),
                     ),
@@ -126,9 +110,27 @@ class ProductScreen extends StatelessWidget {
                     ),
                   ),
                   //Comments Section
-                  const Comments(),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 15,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            viewComments = !viewComments;
+                          });
+                        },
+                        child: Comments(
+                          isOpen: viewComments,
+                        ),
+                      ),
+                    ),
+                  ),
+
                   //Technical Info Section
-                  const Comments(),
+                  // const Comments(),
                 ],
               ),
             ),
@@ -157,10 +159,13 @@ class ProductScreen extends StatelessWidget {
                         child: const Text('افزودن به سبد خرید'),
                       ),
                       const Spacer(),
-                      const SizedBox(
-                        height: 30,
-                        child: CustomBadge(content: '10%'),
-                      ),
+                      widget.product.discount != 0
+                          ? SizedBox(
+                              height: 30,
+                              child: CustomBadge(
+                                  content: '${widget.product.discount}%'),
+                            )
+                          : const Spacer(),
                       const SizedBox(
                         width: 10,
                       ),
@@ -168,12 +173,21 @@ class ProductScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          widget.product.discount != 0
+                              ? Text(
+                                  CustomMacth.seperate3Digit(
+                                      widget.product.realPrice),
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                )
+                              : const Row(),
                           Text(
-                            '150000',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          Text(
-                            '135000',
+                            CustomMacth.seperate3Digit(
+                              CustomMacth.calcuteDiscount(
+                                widget.product.discount,
+                                widget.product.realPrice,
+                              ),
+                            ),
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                         ],
@@ -197,20 +211,68 @@ class ProductScreen extends StatelessWidget {
   }
 }
 
-class Comments extends StatelessWidget {
-  const Comments({
+class ProductVariant extends StatelessWidget {
+  const ProductVariant({
     super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
   });
+
+  final String title;
+  final String value;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 30,
-        vertical: 15,
-      ),
-      sliver: SliverToBoxAdapter(
-        child: Container(
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: CustomColors.mainGrayText,
+          size: 25,
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        SizedBox(
+          width: 50,
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+        ),
+        const SizedBox(
+          width: 2,
+        ),
+        Text(
+          ':',
+          style: Theme.of(context).textTheme.displaySmall,
+        ),
+        const SizedBox(
+          width: 2,
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.displaySmall,
+        )
+      ],
+    );
+  }
+}
+
+class Comments extends StatelessWidget {
+  const Comments({
+    super.key,
+    required this.isOpen,
+  });
+  final bool isOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
           padding: const EdgeInsets.symmetric(
             horizontal: 30,
           ),
@@ -227,17 +289,22 @@ class Comments extends StatelessWidget {
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const Spacer(),
-              Text(
-                'مشاهده',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              const Icon(
-                Icons.arrow_drop_down_circle_outlined,
+              Icon(
+                isOpen
+                    ? Icons.arrow_drop_up_rounded
+                    : Icons.arrow_drop_down_rounded,
               ),
             ],
           ),
         ),
-      ),
+        isOpen
+            ? Container(
+                width: double.infinity,
+                height: 300,
+                color: CustomColors.mainGreen,
+              )
+            : const Row(),
+      ],
     );
   }
 }

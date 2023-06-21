@@ -4,6 +4,7 @@ import 'package:bookstore_app/bloc/home/home_state.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/data/model/banner.dart';
 import 'package:bookstore_app/data/model/category.dart';
+import 'package:bookstore_app/data/model/product.dart';
 import 'package:bookstore_app/widgets/custom_cached_image.dart';
 import 'package:bookstore_app/widgets/custom_category_chip.dart';
 import 'package:bookstore_app/widgets/custom_loading.dart';
@@ -12,7 +13,6 @@ import 'package:bookstore_app/widgets/custom_product_cart.dart';
 import 'package:bookstore_app/widgets/custom_search_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -103,9 +103,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               //Products list Section
-              const SliverToBoxAdapter(
-                child: ProductsList(),
+              state.productsResponse.fold(
+                (error) {
+                  return SliverToBoxAdapter(
+                    child: Text(error),
+                  );
+                },
+                (success) {
+                  return SliverToBoxAdapter(
+                    child: ProductsList(
+                      products: success,
+                    ),
+                  );
+                },
               ),
+
               //ADS Banner Sectiopn
               const SliverPadding(
                 padding: EdgeInsets.symmetric(
@@ -117,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               //Products list Section
-              const SliverToBoxAdapter(
-                child: ProductsList(),
-              ),
+              // const SliverToBoxAdapter(
+              //   child: ProductsList(),
+              // ),
 
               SliverPadding(
                 padding: const EdgeInsets.symmetric(
@@ -161,7 +173,9 @@ class AdsBanner extends StatelessWidget {
 class ProductsList extends StatelessWidget {
   const ProductsList({
     super.key,
+    required this.products,
   });
+  final List<ProductModel> products;
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +185,7 @@ class ProductsList extends StatelessWidget {
       color: CustomColors.mainGreen,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 10,
+        itemCount: products.length,
         itemBuilder: (context, index) {
           if (index == 0) {
             return Column(
@@ -208,8 +222,9 @@ class ProductsList extends StatelessWidget {
               ],
             );
           } else {
-            return const CustomProductCart(
+            return CustomProductCart(
               hasShaddow: false,
+              product: products[index - 1],
             );
           }
         },
