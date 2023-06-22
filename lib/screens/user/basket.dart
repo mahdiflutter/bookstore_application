@@ -34,7 +34,7 @@ class BasketScreen extends StatelessWidget {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 1,
                       mainAxisSpacing: 0,
-                      mainAxisExtent: 250,
+                      mainAxisExtent: 290,
                     ),
                     itemBuilder: (context, index) {
                       return const BasketProductCart();

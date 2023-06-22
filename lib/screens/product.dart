@@ -1,10 +1,17 @@
+import 'package:bookstore_app/bloc/product/product_bloc.dart';
+import 'package:bookstore_app/bloc/product/product_event.dart';
+import 'package:bookstore_app/bloc/product/product_state.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/data/model/comment.dart';
 import 'package:bookstore_app/data/model/product.dart';
 import 'package:bookstore_app/services/service_math.dart';
 import 'package:bookstore_app/widgets/custom_badge.dart';
 import 'package:bookstore_app/widgets/custom_cached_image.dart';
+import 'package:bookstore_app/widgets/custom_comment_box.dart';
 import 'package:bookstore_app/widgets/custom_header.dart';
+import 'package:bookstore_app/widgets/custom_loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({
@@ -20,191 +27,231 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   bool viewComments = false;
   @override
+  void initState() {
+    // TODO: implement initState
+    BlocProvider.of<ProductBloc>(context).add(
+      ProductSendRequestEvent(),
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: CustomScrollView(
-                slivers: [
-                  //Header Section
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 30),
-                    sliver: SliverToBoxAdapter(
-                      child: CustomHeader(title: widget.product.categoryId),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: BlocBuilder<ProductBloc, ProductState>(
+                  builder: (context, state) {
+                    return CustomScrollView(
+                      slivers: [
+                        if (state is ProductLoadingState) ...[
+                          const SliverToBoxAdapter(
+                            child: CustomLoading(),
+                          )
+                        ],
+                        if (state is ProductResponseState) ...[
+                          //Header Section
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 30),
+                            sliver: SliverToBoxAdapter(
+                              child: CustomHeader(
+                                  title: widget.product.categoryId),
+                            ),
+                          ),
+                          //Image Gallery Section
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 180,
+                                  height: 260,
+                                  child: CustomCachedImage(
+                                    url: widget.product.imgUrl,
+                                    radius: 0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          //Book information Setion
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                              vertical: 20,
+                            ),
+                            sliver: SliverToBoxAdapter(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    widget.product.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayLarge,
+                                  ),
+                                  ProductVariant(
+                                    icon: Icons.person_outline,
+                                    title: 'نویسنده',
+                                    value: widget.product.writerName,
+                                  ),
+                                  ProductVariant(
+                                    icon: Icons.store_mall_directory_outlined,
+                                    title: 'انتشارات',
+                                    value: widget.product.publisher,
+                                  ),
+                                  widget.product.translator != ""
+                                      ? ProductVariant(
+                                          icon: Icons.translate,
+                                          title: 'مترجم',
+                                          value: widget.product.translator,
+                                        )
+                                      : const Row(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          //Summary Section
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                            ),
+                            sliver: SliverToBoxAdapter(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'خلاصه کتاب:',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium,
+                                  ),
+                                  Text(
+                                    'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          state.commentsResponse.fold(
+                            (error) {
+                              return const SliverToBoxAdapter(
+                                child: Text('error'),
+                              );
+                            },
+                            (success) {
+                              return //Comments Section
+                                  SliverPadding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 15,
+                                ),
+                                sliver: SliverToBoxAdapter(
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        viewComments = !viewComments;
+                                      });
+                                    },
+                                    child: Comments(
+                                      isOpen: viewComments,
+                                      comments: success,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+
+                          //Technical Info Section
+                          // const Comments(),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ),
+              //Buy Button Section
+              Positioned(
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      top: BorderSide(
+                        width: 1,
+                      ),
                     ),
                   ),
-                  //Image Gallery Section
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Row(
                       children: [
-                        SizedBox(
-                          width: 180,
-                          height: 260,
-                          child: CustomCachedImage(
-                            url: widget.product.imgUrl,
-                            radius: 0,
-                          ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('افزودن به سبد خرید'),
                         ),
+                        const Spacer(),
+                        widget.product.discount != 0
+                            ? SizedBox(
+                                height: 30,
+                                child: CustomBadge(
+                                    content: '%${widget.product.discount}'),
+                              )
+                            : const Spacer(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            widget.product.discount != 0
+                                ? Text(
+                                    CustomMacth.seperate3Digit(
+                                        widget.product.realPrice),
+                                    style:
+                                        Theme.of(context).textTheme.labelMedium,
+                                  )
+                                : const Row(),
+                            Text(
+                              CustomMacth.seperate3Digit(
+                                CustomMacth.calcuteDiscount(
+                                  widget.product.discount,
+                                  widget.product.realPrice,
+                                ),
+                              ),
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'تومان',
+                          style: Theme.of(context).textTheme.displayLarge,
+                        )
                       ],
                     ),
                   ),
-                  //Book information Setion
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 20,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          Text(
-                            widget.product.name,
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ),
-                          ProductVariant(
-                            icon: Icons.person_outline,
-                            title: 'نویسنده',
-                            value: widget.product.writerName,
-                          ),
-                          ProductVariant(
-                            icon: Icons.store_mall_directory_outlined,
-                            title: 'انتشارات',
-                            value: widget.product.publisher,
-                          ),
-                          widget.product.translator != ""
-                              ? ProductVariant(
-                                  icon: Icons.translate,
-                                  title: 'مترجم',
-                                  value: widget.product.translator,
-                                )
-                              : const Row(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  //Summary Section
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'خلاصه کتاب:',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          Text(
-                            'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  //Comments Section
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            viewComments = !viewComments;
-                          });
-                        },
-                        child: Comments(
-                          isOpen: viewComments,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  //Technical Info Section
-                  // const Comments(),
-                ],
-              ),
-            ),
-            //Buy Button Section
-            Positioned(
-              bottom: 0,
-              right: 0,
-              left: 0,
-              child: Container(
-                width: double.infinity,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                    top: BorderSide(
-                      width: 1,
-                    ),
-                  ),
                 ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('افزودن به سبد خرید'),
-                      ),
-                      const Spacer(),
-                      widget.product.discount != 0
-                          ? SizedBox(
-                              height: 30,
-                              child: CustomBadge(
-                                  content: '${widget.product.discount}%'),
-                            )
-                          : const Spacer(),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          widget.product.discount != 0
-                              ? Text(
-                                  CustomMacth.seperate3Digit(
-                                      widget.product.realPrice),
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                )
-                              : const Row(),
-                          Text(
-                            CustomMacth.seperate3Digit(
-                              CustomMacth.calcuteDiscount(
-                                widget.product.discount,
-                                widget.product.realPrice,
-                              ),
-                            ),
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'تومان',
-                        style: Theme.of(context).textTheme.displayLarge,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -230,27 +277,21 @@ class ProductVariant extends StatelessWidget {
         Icon(
           icon,
           color: CustomColors.mainGrayText,
-          size: 25,
+          size: 20,
         ),
         const SizedBox(
-          width: 10,
+          width: 5,
         ),
         SizedBox(
-          width: 50,
+          width: 60,
           child: Text(
             title,
             style: Theme.of(context).textTheme.displaySmall,
           ),
         ),
-        const SizedBox(
-          width: 2,
-        ),
         Text(
           ':',
           style: Theme.of(context).textTheme.displaySmall,
-        ),
-        const SizedBox(
-          width: 2,
         ),
         Text(
           value,
@@ -265,8 +306,10 @@ class Comments extends StatelessWidget {
   const Comments({
     super.key,
     required this.isOpen,
+    required this.comments,
   });
   final bool isOpen;
+  final List<CommentModel> comments;
 
   @override
   Widget build(BuildContext context) {
@@ -300,8 +343,22 @@ class Comments extends StatelessWidget {
         isOpen
             ? Container(
                 width: double.infinity,
-                height: 300,
-                color: CustomColors.mainGreen,
+                margin: const EdgeInsets.only(
+                  top: 10,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 15,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    for (var comment in comments)
+                      CustomCommentBox(comment: comment),
+                  ],
+                ),
               )
             : const Row(),
       ],

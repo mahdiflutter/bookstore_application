@@ -181,7 +181,7 @@ class ProductsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 270,
+      height: 250,
       color: CustomColors.mainGreen,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -211,10 +211,12 @@ class ProductsList extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       Image.asset(
                         'assets/images/sugguestedproducts.png',
+                        width: 80,
+                        height: 90,
                       ),
                     ],
                   ),

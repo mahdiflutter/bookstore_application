@@ -1,10 +1,12 @@
-import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/bloc/product/product_bloc.dart';
+// import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/data/model/product.dart';
 import 'package:bookstore_app/screens/product.dart';
 import 'package:bookstore_app/services/service_math.dart';
 import 'package:bookstore_app/widgets/custom_badge.dart';
 import 'package:bookstore_app/widgets/custom_cached_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomProductCart extends StatelessWidget {
   const CustomProductCart({
@@ -23,18 +25,20 @@ class CustomProductCart extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => Directionality(
-                textDirection: TextDirection.rtl,
-                child: ProductScreen(
-                  product: product,
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => BlocProvider(
+                  create: (context) => ProductBloc(),
+                  child: ProductScreen(
+                    product: product,
+                  ),
                 ),
               ),
-            ));
+            );
           },
           child: Container(
-            width: 160.0,
-            height: 220,
+            width: 140.0,
+            height: 220.0,
             margin: const EdgeInsets.only(left: 20),
             decoration: BoxDecoration(
                 color: Colors.white,

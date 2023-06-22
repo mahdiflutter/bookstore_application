@@ -28,19 +28,24 @@ class CustomCategoryChip extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: CustomColors.mainOrange,
+              color: CustomColors.textFieldBackground,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: const Offset(0, 2),
-                  color: CustomColors.mainOrange,
+                  color: CustomColors.textFieldBackground,
                 ),
               ],
             ),
-            child: CustomCachedImage(
-              url: category.iconUrl,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: CustomCachedImage(
+                url: category.iconUrl,
+                radius: 0,
+              ),
             ),
           ),
           Text(
