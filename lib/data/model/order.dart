@@ -15,6 +15,8 @@ class OrderModel {
   final int realPrice;
   @HiveField(5)
   final int count;
+  @HiveField(6)
+  final String imageUrl;
   OrderModel({
     required this.id,
     required this.name,
@@ -22,5 +24,6 @@ class OrderModel {
     required this.discount,
     required this.realPrice,
     required this.count,
+    required this.imageUrl,
   });
 }

@@ -1,3 +1,4 @@
+import 'package:bookstore_app/bloc/basket/basket_bloc.dart';
 import 'package:bookstore_app/bloc/category/category_bloc.dart';
 import 'package:bookstore_app/bloc/home/home_bloc.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
@@ -151,7 +152,10 @@ class _HomeState extends State<Home> {
         create: (context) => HomeBloc(),
         child: const HomeScreen(),
       ),
-      BasketScreen(),
+      BlocProvider(
+        create: (context) => BasketBloc(),
+        child: const BasketScreen(),
+      ),
       ProfileScreen(),
     ];
   }

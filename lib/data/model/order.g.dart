@@ -23,13 +23,14 @@ class OrderModelAdapter extends TypeAdapter<OrderModel> {
       discount: fields[3] as int,
       realPrice: fields[4] as int,
       count: fields[5] as int,
+      imageUrl: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, OrderModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class OrderModelAdapter extends TypeAdapter<OrderModel> {
       ..writeByte(4)
       ..write(obj.realPrice)
       ..writeByte(5)
-      ..write(obj.count);
+      ..write(obj.count)
+      ..writeByte(6)
+      ..write(obj.imageUrl);
   }
 
   @override

@@ -27,9 +27,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       (event, emit) async {
         Either<String, String> basketDataSource =
             await _basketRepository.addToBasket(event.product);
+        final Either<String, List<CommentModel>> commentsResponse =
+            await _commentsRepository.getComments();
         emit(
           ProductAddedToBasketState(
             response: basketDataSource,
+            commentsResponse: commentsResponse,
           ),
         );
       },
