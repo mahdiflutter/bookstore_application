@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
         child: const HomeScreen(),
       ),
       BlocProvider(
-        create: (context) => BasketBloc(),
+        create: (context) => serviceLocator.get<BasketBloc>(),
         child: const BasketScreen(),
       ),
       ProfileScreen(),

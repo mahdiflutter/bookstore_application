@@ -1,3 +1,4 @@
+import 'package:bookstore_app/bloc/basket/basket_bloc.dart';
 import 'package:bookstore_app/data/datasource/basket/basket_data_source.dart';
 import 'package:bookstore_app/data/datasource/home/banners_data_source.dart';
 import 'package:bookstore_app/data/datasource/home/categories_data_source.dart';
@@ -46,5 +47,8 @@ Future<void> initGetIt() async {
     BasketRepositoryLocal(),
   );
   //Bloc
+  serviceLocator.registerSingleton<BasketBloc>(
+    BasketBloc(),
+  );
   //Other
 }

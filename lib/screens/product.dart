@@ -1,3 +1,5 @@
+import 'package:bookstore_app/bloc/basket/basket_bloc.dart';
+import 'package:bookstore_app/bloc/basket/basket_event.dart';
 import 'package:bookstore_app/bloc/product/product_bloc.dart';
 import 'package:bookstore_app/bloc/product/product_event.dart';
 import 'package:bookstore_app/bloc/product/product_state.dart';
@@ -28,358 +30,363 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool viewComments = false;
-  @override
-  void initState() {
-    BlocProvider.of<ProductBloc>(context).add(
-      ProductSendRequestEvent(),
-    );
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: BlocBuilder<ProductBloc, ProductState>(
-            builder: (context, state) {
-              return Stack(
-                children: [
-                  if (state is ProductLoadingState) ...[
-                    const CustomLoading(),
-                  ],
-                  if (state is ProductResponseState) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 80),
-                      child: CustomScrollView(
-                        slivers: [
-                          //Header Section
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 30),
-                            sliver: SliverToBoxAdapter(
-                              child: CustomHeader(
-                                  title: widget.product.categoryId),
-                            ),
-                          ),
-                          //Image Gallery Section
-                          SliverToBoxAdapter(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 180,
-                                  height: 260,
-                                  child: CustomCachedImage(
-                                    url: widget.product.imgUrl,
-                                    radius: 0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          //Book information Setion
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
-                              vertical: 20,
-                            ),
-                            sliver: SliverToBoxAdapter(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    widget.product.name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayLarge,
-                                  ),
-                                  ProductVariant(
-                                    icon: Icons.person_outline,
-                                    title: 'نویسنده',
-                                    value: widget.product.writerName,
-                                  ),
-                                  ProductVariant(
-                                    icon: Icons.store_mall_directory_outlined,
-                                    title: 'انتشارات',
-                                    value: widget.product.publisher,
-                                  ),
-                                  widget.product.translator != ""
-                                      ? ProductVariant(
-                                          icon: Icons.translate,
-                                          title: 'مترجم',
-                                          value: widget.product.translator,
-                                        )
-                                      : const Row(),
-                                ],
+    return BlocProvider(
+      create: (context) {
+        var bloc = ProductBloc();
+        bloc.add(ProductSendRequestEvent());
+        return bloc;
+      },
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: BlocBuilder<ProductBloc, ProductState>(
+              builder: (context, state) {
+                return Stack(
+                  children: [
+                    if (state is ProductLoadingState) ...[
+                      const CustomLoading(),
+                    ],
+                    if (state is ProductResponseState) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        child: CustomScrollView(
+                          slivers: [
+                            //Header Section
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 30),
+                              sliver: SliverToBoxAdapter(
+                                child: CustomHeader(
+                                    title: widget.product.categoryId),
                               ),
                             ),
-                          ),
-                          //Summary Section
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
-                            ),
-                            sliver: SliverToBoxAdapter(
+                            //Image Gallery Section
+                            SliverToBoxAdapter(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'خلاصه کتاب:',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium,
-                                  ),
-                                  Text(
-                                    'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          state.commentsResponse.fold(
-                            (error) {
-                              return const SliverToBoxAdapter(
-                                child: Text('error'),
-                              );
-                            },
-                            (success) {
-                              return //Comments Section
-                                  SliverPadding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 15,
-                                ),
-                                sliver: SliverToBoxAdapter(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        viewComments = !viewComments;
-                                      });
-                                    },
-                                    child: Comments(
-                                      isOpen: viewComments,
-                                      comments: success,
+                                  SizedBox(
+                                    width: 180,
+                                    height: 260,
+                                    child: CustomCachedImage(
+                                      url: widget.product.imgUrl,
+                                      radius: 0,
                                     ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            //Book information Setion
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 20,
+                              ),
+                              sliver: SliverToBoxAdapter(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.product.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayLarge,
+                                    ),
+                                    ProductVariant(
+                                      icon: Icons.person_outline,
+                                      title: 'نویسنده',
+                                      value: widget.product.writerName,
+                                    ),
+                                    ProductVariant(
+                                      icon: Icons.store_mall_directory_outlined,
+                                      title: 'انتشارات',
+                                      value: widget.product.publisher,
+                                    ),
+                                    widget.product.translator != ""
+                                        ? ProductVariant(
+                                            icon: Icons.translate,
+                                            title: 'مترجم',
+                                            value: widget.product.translator,
+                                          )
+                                        : const Row(),
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Buy Button Section
-                    FooterButton(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                BlocProvider.of<ProductBloc>(context).add(
-                                  ProductAddToBasketEvent(
-                                      product: widget.product),
+                              ),
+                            ),
+                            //Summary Section
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                              ),
+                              sliver: SliverToBoxAdapter(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'خلاصه کتاب:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                    ),
+                                    Text(
+                                      'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            state.commentsResponse.fold(
+                              (error) {
+                                return const SliverToBoxAdapter(
+                                  child: Text('error'),
                                 );
                               },
-                              child: const Text('افزودن به سبد خرید'),
-                            ),
-                            const Spacer(),
-                            widget.product.discount != 0
-                                ? SizedBox(
-                                    height: 30,
-                                    child: CustomBadge(
-                                        content: '%${widget.product.discount}'),
-                                  )
-                                : const Spacer(),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                widget.product.discount != 0
-                                    ? Text(
-                                        CustomMacth.seperate3Digit(
-                                            widget.product.realPrice),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      )
-                                    : const Row(),
-                                Text(
-                                  CustomMacth.seperate3Digit(
-                                    CustomMacth.calcuteDiscount(
-                                      widget.product.discount,
-                                      widget.product.realPrice,
+                              (success) {
+                                return //Comments Section
+                                    SliverPadding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 15,
+                                  ),
+                                  sliver: SliverToBoxAdapter(
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          viewComments = !viewComments;
+                                        });
+                                      },
+                                      child: Comments(
+                                        isOpen: viewComments,
+                                        comments: success,
+                                      ),
                                     ),
                                   ),
-                                  style:
-                                      Theme.of(context).textTheme.displayLarge,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              'تومان',
-                              style: Theme.of(context).textTheme.displayLarge,
+                                );
+                              },
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                  if (state is ProductAddedToBasketState) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 80),
-                      child: CustomScrollView(
-                        slivers: [
-                          //Header Section
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 30),
-                            sliver: SliverToBoxAdapter(
-                              child: CustomHeader(
-                                  title: widget.product.categoryId),
-                            ),
-                          ),
-                          //Image Gallery Section
-                          SliverToBoxAdapter(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 180,
-                                  height: 260,
-                                  child: CustomCachedImage(
-                                    url: widget.product.imgUrl,
-                                    radius: 0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          //Book information Setion
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
-                              vertical: 20,
-                            ),
-                            sliver: SliverToBoxAdapter(
-                              child: Column(
+                      //Buy Button Section
+                      FooterButton(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          child: Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  BlocProvider.of<ProductBloc>(context).add(
+                                    ProductAddToBasketEvent(
+                                        product: widget.product),
+                                  );
+                                  BlocProvider.of<BasketBloc>(context).add(
+                                    BasketSendRequestEvent(),
+                                  );
+                                },
+                                child: const Text('افزودن به سبد خرید'),
+                              ),
+                              const Spacer(),
+                              widget.product.discount != 0
+                                  ? SizedBox(
+                                      height: 30,
+                                      child: CustomBadge(
+                                          content:
+                                              '%${widget.product.discount}'),
+                                    )
+                                  : const Spacer(),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  widget.product.discount != 0
+                                      ? Text(
+                                          CustomMacth.seperate3Digit(
+                                              widget.product.realPrice),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium,
+                                        )
+                                      : const Row(),
                                   Text(
-                                    widget.product.name,
+                                    CustomMacth.seperate3Digit(
+                                      CustomMacth.calcuteDiscount(
+                                        widget.product.discount,
+                                        widget.product.realPrice,
+                                      ),
+                                    ),
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayLarge,
                                   ),
-                                  ProductVariant(
-                                    icon: Icons.person_outline,
-                                    title: 'نویسنده',
-                                    value: widget.product.writerName,
-                                  ),
-                                  ProductVariant(
-                                    icon: Icons.store_mall_directory_outlined,
-                                    title: 'انتشارات',
-                                    value: widget.product.publisher,
-                                  ),
-                                  widget.product.translator != ""
-                                      ? ProductVariant(
-                                          icon: Icons.translate,
-                                          title: 'مترجم',
-                                          value: widget.product.translator,
-                                        )
-                                      : const Row(),
                                 ],
                               ),
-                            ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'تومان',
+                                style: Theme.of(context).textTheme.displayLarge,
+                              ),
+                            ],
                           ),
-                          //Summary Section
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
+                        ),
+                      ),
+                    ],
+                    if (state is ProductAddedToBasketState) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 80),
+                        child: CustomScrollView(
+                          slivers: [
+                            //Header Section
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 30),
+                              sliver: SliverToBoxAdapter(
+                                child: CustomHeader(
+                                    title: widget.product.categoryId),
+                              ),
                             ),
-                            sliver: SliverToBoxAdapter(
+                            //Image Gallery Section
+                            SliverToBoxAdapter(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'خلاصه کتاب:',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium,
-                                  ),
-                                  Text(
-                                    'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          state.commentsResponse.fold(
-                            (error) {
-                              return const SliverToBoxAdapter(
-                                child: Text('error'),
-                              );
-                            },
-                            (success) {
-                              return //Comments Section
-                                  SliverPadding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 15,
-                                ),
-                                sliver: SliverToBoxAdapter(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        viewComments = !viewComments;
-                                      });
-                                    },
-                                    child: Comments(
-                                      isOpen: viewComments,
-                                      comments: success,
+                                  SizedBox(
+                                    width: 180,
+                                    height: 260,
+                                    child: CustomCachedImage(
+                                      url: widget.product.imgUrl,
+                                      radius: 0,
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    //Buy Button Section
-                    FooterButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'این محصول به سبد خرید شما افزوده شد.',
-                            style: TextStyle(
-                              color: CustomColors.mainGreen,
-                              fontFamily: 'vazirbold',
-                              fontSize: 17,
+                                ],
+                              ),
                             ),
-                          )
-                        ],
+                            //Book information Setion
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 20,
+                              ),
+                              sliver: SliverToBoxAdapter(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.product.name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayLarge,
+                                    ),
+                                    ProductVariant(
+                                      icon: Icons.person_outline,
+                                      title: 'نویسنده',
+                                      value: widget.product.writerName,
+                                    ),
+                                    ProductVariant(
+                                      icon: Icons.store_mall_directory_outlined,
+                                      title: 'انتشارات',
+                                      value: widget.product.publisher,
+                                    ),
+                                    widget.product.translator != ""
+                                        ? ProductVariant(
+                                            icon: Icons.translate,
+                                            title: 'مترجم',
+                                            value: widget.product.translator,
+                                          )
+                                        : const Row(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            //Summary Section
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                              ),
+                              sliver: SliverToBoxAdapter(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'خلاصه کتاب:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                    ),
+                                    Text(
+                                      'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز...',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            state.commentsResponse.fold(
+                              (error) {
+                                return const SliverToBoxAdapter(
+                                  child: Text('error'),
+                                );
+                              },
+                              (success) {
+                                return //Comments Section
+                                    SliverPadding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 15,
+                                  ),
+                                  sliver: SliverToBoxAdapter(
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          viewComments = !viewComments;
+                                        });
+                                      },
+                                      child: Comments(
+                                        isOpen: viewComments,
+                                        comments: success,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      //Added Button Section
+                      FooterButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'این محصول به سبد خرید شما افزوده شد.',
+                              style: TextStyle(
+                                color: CustomColors.mainGreen,
+                                fontFamily: 'vazirbold',
+                                fontSize: 17,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -487,7 +494,7 @@ class Comments extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                '21+ دیدگاه',
+                '${comments.length}دیدگاه',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const Spacer(),

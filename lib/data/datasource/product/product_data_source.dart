@@ -11,7 +11,7 @@ class ProductDetailDataSourceNetwork extends ProductDetailDataSource {
           'id': '150',
           'userName': 'مرتضی',
           'userProfile':
-              'https://axneveshte.ir/wp-content/uploads/2022/08/FACK-PESARONE-PROFILE-axneveshte-ir-4.jpg',
+              'https://png.pngtree.com/png-vector/20190704/ourlarge/pngtree-boy-user-avatar-vector-icon-free-png-image_1538406.jpg',
           'comment': 'کتاب جالبیه ، ارزش خریدن رو داشت.',
           'stars': 4,
         },
@@ -35,7 +35,7 @@ class ProductDetailDataSourceNetwork extends ProductDetailDataSource {
           'id': '834',
           'userName': 'جواتی',
           'userProfile':
-              'https://elanet.ir/wp-content/uploads/2023/04/ax-dokhtaraneh-feik-14.jpg',
+              'https://png.pngtree.com/png-vector/20190704/ourlarge/pngtree-boy-user-avatar-vector-icon-free-png-image_1538406.jpg',
           'comment':
               'ترجمه کتاب روونه . ولی کیفیت چاپ خیلی بده . برا همین 3 ستاره کم میدم',
           'stars': 2,

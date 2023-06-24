@@ -14,7 +14,7 @@ class OrderModel {
   @HiveField(4)
   final int realPrice;
   @HiveField(5)
-  final int count;
+  int count;
   @HiveField(6)
   final String imageUrl;
   OrderModel({

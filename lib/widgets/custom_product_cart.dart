@@ -1,7 +1,9 @@
+import 'package:bookstore_app/bloc/basket/basket_bloc.dart';
 import 'package:bookstore_app/bloc/product/product_bloc.dart';
 // import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/data/model/product.dart';
 import 'package:bookstore_app/screens/product.dart';
+import 'package:bookstore_app/services/service_locator.dart';
 import 'package:bookstore_app/services/service_math.dart';
 import 'package:bookstore_app/widgets/custom_badge.dart';
 import 'package:bookstore_app/widgets/custom_cached_image.dart';
@@ -27,8 +29,8 @@ class CustomProductCart extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (context) => ProductBloc(),
+                builder: (context) => BlocProvider.value(
+                  value: serviceLocator.get<BasketBloc>(),
                   child: ProductScreen(
                     product: product,
                   ),

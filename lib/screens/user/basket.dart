@@ -64,7 +64,7 @@ class _BasketScreenState extends State<BasketScreen> {
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 1,
                                 mainAxisSpacing: 0,
-                                mainAxisExtent: 290,
+                                mainAxisExtent: 270,
                               ),
                               itemBuilder: (context, index) {
                                 return BasketProductCart(
@@ -79,7 +79,6 @@ class _BasketScreenState extends State<BasketScreen> {
                   ),
 
                   //Buy Button Section
-
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -226,7 +225,11 @@ class BasketProductCart extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        BlocProvider.of<BasketBloc>(context).add(
+                          BasketIncreaseOrderCount(order: order),
+                        );
+                      },
                       padding: const EdgeInsets.all(0),
                       icon: const Icon(
                         Icons.add,
@@ -236,14 +239,31 @@ class BasketProductCart extends StatelessWidget {
                       order.count.toString(),
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      padding: const EdgeInsets.all(0),
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-                    )
+                    order.count == 1
+                        ? IconButton(
+                            onPressed: () {
+                              BlocProvider.of<BasketBloc>(context).add(
+                                BasketDeleteOrderEvent(order: order),
+                              );
+                            },
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              BlocProvider.of<BasketBloc>(context).add(
+                                BasketDecrementOrderCount(order: order),
+                              );
+                            },
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(
+                              Icons.remove,
+                              color: Colors.red,
+                            ),
+                          )
                   ],
                 ),
               ),
