@@ -1,6 +1,7 @@
 import 'package:bookstore_app/bloc/category/category_bloc.dart';
 import 'package:bookstore_app/bloc/home/home_bloc.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
+import 'package:bookstore_app/data/model/order.dart';
 import 'package:bookstore_app/screens/app/setting.dart';
 import 'package:bookstore_app/screens/categories.dart';
 import 'package:bookstore_app/screens/home.dart';
@@ -10,8 +11,12 @@ import 'package:bookstore_app/services/service_locator.dart';
 import 'package:bookstore_app/services/service_theme.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 
 void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(OrderModelAdapter());
+  await Hive.openBox<OrderModel>('orders');
   await initGetIt();
   runApp(const App());
 }
