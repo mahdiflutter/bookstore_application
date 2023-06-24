@@ -35,7 +35,7 @@ class ProductDetailDataSourceNetwork extends ProductDetailDataSource {
           'id': '834',
           'userName': 'جواتی',
           'userProfile':
-              'https://zhaviz.com/wp-content/uploads/2020/04/f0c6c55a014f345236c9096c0b00417a.jpg',
+              'https://elanet.ir/wp-content/uploads/2023/04/ax-dokhtaraneh-feik-14.jpg',
           'comment':
               'ترجمه کتاب روونه . ولی کیفیت چاپ خیلی بده . برا همین 3 ستاره کم میدم',
           'stars': 2,
