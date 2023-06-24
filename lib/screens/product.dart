@@ -28,7 +28,6 @@ class _ProductScreenState extends State<ProductScreen> {
   bool viewComments = false;
   @override
   void initState() {
-    // TODO: implement initState
     BlocProvider.of<ProductBloc>(context).add(
       ProductSendRequestEvent(),
     );

@@ -7,6 +7,11 @@ class ProductInitState extends ProductState {}
 
 class ProductLoadingState extends ProductState {}
 
+class ProductAddedToBasketState extends ProductState {
+  final Either<String, String> response;
+  ProductAddedToBasketState({required this.response});
+}
+
 class ProductResponseState extends ProductState {
   final Either<String, List<CommentModel>> commentsResponse;
   ProductResponseState({

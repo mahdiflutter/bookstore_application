@@ -1,8 +1,10 @@
+import 'package:bookstore_app/data/datasource/basket/basket_data_source.dart';
 import 'package:bookstore_app/data/datasource/home/banners_data_source.dart';
 import 'package:bookstore_app/data/datasource/home/categories_data_source.dart';
 import 'package:bookstore_app/data/datasource/home/products_data_source.dart';
 import 'package:bookstore_app/data/datasource/product/product_data_source.dart';
 import 'package:bookstore_app/data/repository/banners_repository.dart';
+import 'package:bookstore_app/data/repository/basket_repository.dart';
 import 'package:bookstore_app/data/repository/categories_repository.dart';
 import 'package:bookstore_app/data/repository/product_repository.dart';
 import 'package:bookstore_app/data/repository/products_repository.dart';
@@ -23,6 +25,9 @@ Future<void> initGetIt() async {
   serviceLocator.registerSingleton<ProductDetailDataSource>(
     ProductDetailDataSourceNetwork(),
   );
+  serviceLocator.registerSingleton<BasketDataSource>(
+    BasketDataSourceLocal(),
+  );
 
   //Repositories
   serviceLocator.registerSingleton<BannersRepository>(
@@ -36,6 +41,9 @@ Future<void> initGetIt() async {
   );
   serviceLocator.registerSingleton<ProductDetailRepository>(
     ProductDetailRepositoryNetwork(),
+  );
+  serviceLocator.registerSingleton<BasketRepository>(
+    BasketRepositoryLocal(),
   );
   //Bloc
   //Other
