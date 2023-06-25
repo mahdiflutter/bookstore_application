@@ -48,7 +48,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int selectedPage = 2;
+  int selectedPage = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,15 +84,6 @@ class _HomeState extends State<Home> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings_outlined,
-            ),
-            activeIcon: Icon(
-              Icons.settings,
-            ),
-            label: 'تنظیمات',
-          ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.category_outlined,
@@ -143,7 +134,6 @@ class _HomeState extends State<Home> {
 
   List<Widget> getScreens() {
     return [
-      SettingsAppScreen(),
       BlocProvider(
         create: (context) => CategoryBloc(),
         child: const CategoriesScreen(),
