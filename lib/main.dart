@@ -3,7 +3,7 @@ import 'package:bookstore_app/bloc/category/category_bloc.dart';
 import 'package:bookstore_app/bloc/home/home_bloc.dart';
 import 'package:bookstore_app/constants/custom_colors.dart';
 import 'package:bookstore_app/data/model/order.dart';
-import 'package:bookstore_app/screens/app/setting.dart';
+// import 'package:bookstore_app/screens/app/setting.dart';
 import 'package:bookstore_app/screens/categories.dart';
 import 'package:bookstore_app/screens/home.dart';
 import 'package:bookstore_app/screens/user/basket.dart';
